@@ -1,0 +1,30 @@
+[
+    {
+      "id": 1,
+      "title": "Origen",
+      "director": "Christopher Nolan",
+      "year": 2010,
+      "image": "https://www.aceprensa.com/wp-content/uploads/2010/08/27205-0.jpg",
+      "synopsis": "Dom Cobb es un ladrón con una extraña habilidad para entrar en los sueños de las personas y robar secretos del subconsciente.",
+      "cast": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"]
+    },
+    {
+        "id": 3,
+        "title": "Creed III",
+        "director": "Michael B. Jordan",
+        "year": 2023,
+        "image": "https://www.lahiguera.net/cinemania/pelicula/10465/creed_iii-cartel-10767.jpg",
+        "synopsis": "Adonis Creed se enfrenta a una nueva amenaza cuando un amigo de la infancia y ex prodigio del boxeo, Damian Anderson, regresa para reclamar lo que cree que es suyo.",
+        "cast": ["Michael B. Jordan", "Tessa Thompson", "Jonathan Majors"]
+      },
+    {
+      "id": 3,
+      "title": "Interestelar",
+      "director": "Christopher Nolan",
+      "year": 2014,
+      "image": "https://m.media-amazon.com/images/I/91vmAIK3d5L._AC_SL1500_.jpg",
+      "synopsis": "Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento por salvar a la humanidad.",
+      "cast": ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"]
+    }
+  ]
+  
