@@ -95,7 +95,7 @@ export default {
         {
           id: 3,
           title: "Película 3",
-          image: "https://hdwallpaperim.com/wp-content/uploads/2017/08/24/107270-Interstellar_movie.jpg"
+          image: "https://m.media-amazon.com/images/I/91vmAIK3d5L._AC_SL1500_.jpg"
         }
       ],
       comingSoon: [
@@ -108,6 +108,11 @@ export default {
           id: 5,
           title: "Próxima Película 2",
           image: "https://th.bing.com/th/id/R.a2c74940f0e653669603f0283d19bad2?rik=Hl2OrlvBubBUfw&riu=http%3a%2f%2fsun9-71.userapi.com%2fimpg%2foK5r-NpG0jYQXQnGdZ0yxZCBaJUIyy6iFmoZ2w%2fpb9J9cV7TNk.jpg%3fsize%3d600x900%26quality%3d95%26sign%3d39472d17ce8aaaf726915f9bd2943b09%26type%3dalbum&ehk=F%2bRbLl6TJ%2fnFNpRU5EUABIvl5PYnw43pZyllL9a4Evc%3d&risl=&pid=ImgRaw&r=0"
+        },
+        {
+          id: 5,
+          title: "Próxima Película 3",
+          image: "https://www.ecartelera.com/carteles-series/2100/2125/001.jpg"
         }
       ]
     };
