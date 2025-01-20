@@ -9,8 +9,8 @@
         <div class="modal-body">
           <form @submit.prevent="submitLogin">
             <div class="mb-3">
-              <label for="email" class="form-label">Correo electrónico</label>
-              <input type="email" class="form-control" id="email" v-model="email" required />
+              <label for="username" class="form-label">Nombre de usuario</label>
+              <input type="text" class="form-control" id="username" v-model="username" required />
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
@@ -32,15 +32,36 @@ export default {
   },
   data() {
     return {
-      email: '',
+      username: '',
       password: ''
     };
   },
   methods: {
-    submitLogin() {
-      // Aquí puedes agregar la lógica para manejar el inicio de sesión
-      console.log('Iniciando sesión con:', this.email, this.password);
-      this.closeModal();
+    async submitLogin() {
+      try {
+        const response = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            NombreUsuario: this.username,
+            Contrasena: this.password,
+          }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('Inicio de sesión exitoso');
+          this.$emit('login-success', this.username); // Emitimos el evento con el nombre de usuario
+          this.closeModal();
+        } else {
+          alert(result.error || 'Error al iniciar sesión');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al conectar con el servidor');
+      }
     },
     closeModal() {
       this.$emit('closeModal');
@@ -50,10 +71,12 @@ export default {
 </script>
 
 <style scoped>
+/* El estilo de la ventana modal */
 .modal {
   display: block;
 }
 </style>
+
 
 <style scoped>
 .modal-overlay {

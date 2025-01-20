@@ -9,7 +9,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto text-center mx-auto">
-            <!-- Sección de navegación -->
             <li class="nav-item">
               <router-link class="nav-link nav-item-link" to="/">HOME</router-link>
             </li>
@@ -19,12 +18,17 @@
             <li class="nav-item">
               <router-link class="nav-link nav-item-link" to="/contact">CONTÁCTANOS</router-link>
             </li>
-            <!-- Barra de separación -->
             <div class="vr mx-2"></div>
-            <!-- Botones de Iniciar sesión y Registrarse con barra '/' -->
-            <li class="nav-item d-flex align-items-center ms-auto">
+
+            <!-- Mostrar nombre de usuario y botón de cerrar sesión si el usuario está autenticado -->
+            <li v-if="user" class="nav-item d-flex align-items-center ms-auto">
+              <span class="nav-link text-white">{{ user }}</span>
+              <a href="#" @click.prevent="logout" class="nav-link logout-btn">CERRAR SESIÓN</a>
+            </li>
+            <!-- Botones de Iniciar sesión y Registrarse si no hay usuario -->
+            <li v-if="!user" class="nav-item d-flex align-items-center ms-auto">
               <a href="#" @click.prevent="openLogin" class="nav-link login-btn">INICIAR SESIÓN</a>
-              <span class="mx-3 text-white">/</span> <!-- Barra de separación -->
+              <span class="mx-3 text-white">/</span>
               <a href="#" @click.prevent="openRegister" class="nav-link register-btn">REGISTRARSE</a>
             </li>
           </ul>
@@ -33,7 +37,7 @@
     </nav>
 
     <!-- Modal Login -->
-    <Login :isVisible="isLoginVisible" @closeModal="closeLoginModal" />
+    <Login :isVisible="isLoginVisible" @closeModal="closeLoginModal" @login-success="handleLoginSuccess" />
 
     <!-- Modal Register -->
     <Register :isVisible="isRegisterVisible" @closeModal="closeRegisterModal" />
@@ -53,7 +57,8 @@ export default {
   data() {
     return {
       isLoginVisible: false,
-      isRegisterVisible: false
+      isRegisterVisible: false,
+      user: localStorage.getItem('user') || null, // Recuperar usuario desde localStorage
     };
   },
   methods: {
@@ -70,11 +75,19 @@ export default {
     },
     closeRegisterModal() {
       this.isRegisterVisible = false;
+    },
+    handleLoginSuccess(username) {
+      this.user = username;  // Guardar el nombre de usuario al iniciar sesión
+      localStorage.setItem('user', username);  // Guardarlo en localStorage
+      this.closeLoginModal();
+    },
+    logout() {
+      this.user = null;
+      localStorage.removeItem('user');  // Eliminar del localStorage
     }
   }
 };
 </script>
-
 
 <style scoped>
 /* El estilo de la barra de navegación */
@@ -110,6 +123,18 @@ export default {
 .navbar-nav .login-btn:hover,
 .navbar-nav .register-btn:hover {
   color: red;
+  transform: translateY(-2px);
+}
+
+.navbar-nav .logout-btn {
+  font-weight: 700;
+  font-size: 1rem;
+  color: red;
+  cursor: pointer;
+}
+
+.navbar-nav .logout-btn:hover {
+  color: darkred;
   transform: translateY(-2px);
 }
 

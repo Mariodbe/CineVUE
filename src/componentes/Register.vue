@@ -42,15 +42,37 @@ export default {
     };
   },
   methods: {
-    submitRegister() {
-      // Aquí puedes agregar la lógica para manejar el registro
-      console.log('Registrando usuario:', this.username, this.email, this.password);
-      this.closeModal();
-    },
-    closeModal() {
-      this.$emit('closeModal');
+  async submitRegister() {
+    try {
+      const response = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          NombreUsuario: this.username,
+          Contrasena: this.password,
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Registro exitoso');
+        console.log('Usuario registrado con ID:', result.userId);
+        this.closeModal();
+      } else {
+        alert(result.error || 'Error al registrarse');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al conectar con el servidor');
     }
-  }
+  },
+  closeModal() {
+    this.$emit('closeModal');
+  },
+}
+
 };
 </script>
 
