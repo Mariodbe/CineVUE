@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
@@ -76,8 +75,6 @@ app.post('/register', async (req, res) => {
 app.post("/api/validate-card", async (req, res) => {
   const { cardNumber, expiryDate, cvv } = req.body;
 
-  console.log("Datos recibidos:", cardNumber, expiryDate, cvv); // Verifica los datos que llegan al servidor
-
   if (!cardNumber || !expiryDate || !cvv) {
     return res.status(400).json({ success: false, message: "Datos incompletos." });
   }
@@ -92,8 +89,6 @@ app.post("/api/validate-card", async (req, res) => {
        AND cvv = ?`,
       [cardNumber, expiryDate, cvv]
     );
-
-    console.log("Resultados de la base de datos:", rows); // Verifica lo que devuelve la consulta
 
     await connection.end();
 

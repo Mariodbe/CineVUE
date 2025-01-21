@@ -104,8 +104,7 @@
       closeModal() {
         this.$emit("close");
       },
-        async processPayment() {
-  console.log(this.paymentDetails); // Verifica los datos antes de enviarlos
+      async processPayment() {
   const apiUrl = "http://localhost:3000/api/validate-card"; // URL del servidor
   
   try {
@@ -118,21 +117,19 @@
     const result = await response.json(); // Parsear la respuesta JSON
 
     if (response.ok) {
-      // La solicitud fue exitosa
-      alert(result.message); // Mostrar mensaje de éxito
       this.$emit("payment-success"); // Emitir evento si el pago fue exitoso
       this.closeModal(); // Cerrar modal
+      this.$router.push("/"); // Redirigir al home
     } else {
       // La solicitud falló (por ejemplo, tarjeta no válida)
-      console.error("Error en el pago:", result.message); // Loguear el error
       alert(result.message); // Mostrar mensaje de error
     }
   } catch (error) {
-    // Manejo de errores generales (problemas de conexión, etc.)
-    console.error("Error al validar tarjeta:", error.stack); // Mostrar stack del error
-    alert("Hubo un error al procesar el pago. Por favor, inténtalo de nuevo más tarde.");
+    console.error("Error al procesar el pago:", error);
+    alert("Error interno del servidor. Intente nuevamente más tarde.");
   }
 }
+
 
 
     },
