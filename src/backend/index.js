@@ -72,6 +72,45 @@ app.post('/register', async (req, res) => {
   }
 });
 
+//pagar
+app.post("/api/validate-card", async (req, res) => {
+  const { cardNumber, expiryDate, cvv } = req.body;
+
+  console.log("Datos recibidos:", cardNumber, expiryDate, cvv); // Verifica los datos que llegan al servidor
+
+  if (!cardNumber || !expiryDate || !cvv) {
+    return res.status(400).json({ success: false, message: "Datos incompletos." });
+  }
+
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+
+    const [rows] = await connection.execute(
+      `SELECT * FROM tarjetas 
+       WHERE numero_tarjeta = ? 
+       AND fecha_vencimiento = ? 
+       AND cvv = ?`,
+      [cardNumber, expiryDate, cvv]
+    );
+
+    console.log("Resultados de la base de datos:", rows); // Verifica lo que devuelve la consulta
+
+    await connection.end();
+
+    if (rows.length > 0) {
+      return res.status(200).json({ success: true, message: "Tarjeta válida." });
+    } else {
+      return res.status(404).json({ success: false, message: "Datos de la tarjeta incorrectos." });
+    }
+  } catch (error) {
+    console.error("Error al validar tarjeta:", error);
+    console.error("Detalles del error:", error.stack); // Esto imprimirá más detalles sobre el error
+    return res.status(500).json({ success: false, message: "Error interno del servidor." });
+  }
+});
+
+
+
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;

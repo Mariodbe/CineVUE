@@ -21,6 +21,16 @@
         </div>
       </div>
 
+      <!-- Mostrar ventana de pago -->
+      <PaymentWindow
+        v-if="isPaymentVisible"
+        :selectedTickets="selectedTickets"
+        :ticketTypes="ticketTypes"
+        :totalPrice="totalPrice"
+        @close="isPaymentVisible = false"
+        @payment-success="handlePaymentSuccess"
+      />
+
       <!-- Precio total -->
       <div class="total-price">
         <p>Total: {{ totalPrice.toFixed(2) }}€</p>
@@ -36,8 +46,13 @@
 </template>
 
 <script>
+import PaymentWindow from "./PaymentWindow.vue";
+
 export default {
   name: "TicketPurchase",
+  components: {
+    PaymentWindow,
+  },
   props: {
     selectedSeats: {
       type: Array,
@@ -58,6 +73,7 @@ export default {
         youth: 0,
         senior: 0,
       },
+      isPaymentVisible: false,
     };
   },
   computed: {
@@ -89,7 +105,14 @@ export default {
       this.$emit("back");
     },
     proceedToPayment() {
-      this.$emit("proceed", {
+      // Activar visibilidad de la ventana de pago
+      this.isPaymentVisible = true;
+    },
+    handlePaymentSuccess() {
+      // Manejar el evento de pago exitoso
+      alert("¡Pago realizado con éxito!");
+      this.isPaymentVisible = false;
+      this.$emit("payment-complete", {
         selectedTickets: this.selectedTickets,
         totalPrice: this.totalPrice,
       });
@@ -97,6 +120,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .modal-overlay {
