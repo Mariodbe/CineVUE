@@ -84,7 +84,7 @@ export default {
       return this.selectedSeats.length - this.totalSelectedTickets;
     },
     isSelectionComplete() {
-      return this.remainingTickets === 0;
+      return this.totalSelectedTickets === this.selectedSeats.length;
     },
     totalPrice() {
       return Object.entries(this.selectedTickets).reduce(
@@ -105,8 +105,10 @@ export default {
       this.$emit("back");
     },
     proceedToPayment() {
-      // Activar visibilidad de la ventana de pago
-      this.isPaymentVisible = true;
+      // Activar visibilidad de la ventana de pago solo si la selección está completa
+      if (this.isSelectionComplete) {
+        this.isPaymentVisible = true;
+      }
     },
     handlePaymentSuccess() {
       // Manejar el evento de pago exitoso
@@ -120,7 +122,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .modal-overlay {

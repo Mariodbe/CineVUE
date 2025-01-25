@@ -16,7 +16,7 @@
               <router-link class="nav-link nav-item-link" to="/movies">PELÍCULAS</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link nav-item-link" to="/contact">CONTÁCTANOS</router-link>
+              <router-link class="nav-link nav-item-link" to="/contact">RESERVAS</router-link>
             </li>
             <div class="vr mx-2"></div>
 

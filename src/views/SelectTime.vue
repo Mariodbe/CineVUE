@@ -1,29 +1,38 @@
 <template>
   <div class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
-      <h3><span class="bold-text">Selecciona una hora</span></h3>
+      <!-- Título del Modal -->
+      <h3>
+        <span class="bold-text">Selecciona una hora</span>
+      </h3>
+      
+      <!-- Opciones de hora -->
       <div class="time-options">
         <button
+          v-for="time in availableTimes"
+          :key="time"
           class="btn btn-lg"
-          :class="{'selected': selectedTime === '19:10'}"
-          @click="selectTime('19:10')"
+          :class="{ selected: selectedTime === time }"
+          @click="selectTime(time)"
         >
-          <span >19:</span>10
-        </button>
-        <button
-          class="btn btn-lg"
-          :class="{'selected': selectedTime === '21:45'}"
-          @click="selectTime('21:45')"
-        >
-          <span >21:</span>45
+          {{ time }}
         </button>
       </div>
-      <button class="btn btn-secondary" @click="closeModal">
-        <span class="bold-text">Cerrar</span>
-      </button>
-      <button class="btn btn-success" @click="nextStep" :disabled="!selectedTime">
-        <span class="bold-text">Siguiente</span>
-      </button>
+
+      <!-- Mensaje de validación -->
+      <p v-if="!selectedTime && showValidationMessage" class="validation-message">
+        Por favor selecciona una hora antes de continuar.
+      </p>
+
+      <!-- Botones de acción -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" @click="closeModal">
+          <span class="bold-text">Cerrar</span>
+        </button>
+        <button class="btn btn-success" @click="nextStep" :disabled="!selectedTime">
+          <span class="bold-text">Siguiente</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -33,21 +42,26 @@ export default {
   name: "SelectTime",
   data() {
     return {
-      selectedTime: null,
+      selectedTime: null, // Hora seleccionada por el usuario
+      availableTimes: ["19:10", "21:45"], // Lista de horas disponibles
+      showValidationMessage: false, // Para mostrar el mensaje de validación
     };
   },
   methods: {
     selectTime(time) {
-      this.selectedTime = time;
+      this.selectedTime = time; // Guardar la hora seleccionada
+      this.showValidationMessage = false; // Ocultar mensaje de validación si se selecciona una hora
     },
     closeModal() {
-      this.$emit('close');
+      this.$emit("close"); // Emitir evento para cerrar el modal
     },
     nextStep() {
-      if (this.selectedTime) {
-        this.$emit('next', this.selectedTime); // Emitir el evento 'next' con la hora seleccionada
-        this.closeModal(); // Cierra el modal después de seleccionar la hora
+      if (!this.selectedTime) {
+        this.showValidationMessage = true; // Mostrar mensaje si no se seleccionó hora
+        return;
       }
+      this.$emit("next", this.selectedTime); // Emitir evento con la hora seleccionada
+      this.closeModal(); // Cerrar el modal
     },
   },
 };

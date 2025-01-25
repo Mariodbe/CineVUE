@@ -10,15 +10,33 @@
           <form @submit.prevent="submitRegister">
             <div class="mb-3">
               <label for="username" class="form-label">Nombre de usuario</label>
-              <input type="text" class="form-control" id="username" v-model="username" required />
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                v-model="username"
+                required
+              />
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Correo electrónico</label>
-              <input type="email" class="form-control" id="email" v-model="email" required />
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                v-model="email"
+                required
+              />
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="password" v-model="password" required />
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="password"
+                required
+              />
             </div>
             <button type="submit" class="btn btn-primary">Registrarse</button>
           </form>
@@ -30,49 +48,49 @@
 
 <script>
 export default {
-  name: 'Register',
+  name: "Register",
   props: {
-    isVisible: Boolean
+    isVisible: Boolean,
   },
   data() {
     return {
-      username: '',
-      email: '',
-      password: ''
+      username: "",
+      email: "",
+      password: "",
     };
   },
   methods: {
-  async submitRegister() {
-    try {
-      const response = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          NombreUsuario: this.username,
-          Contrasena: this.password,
-        }),
-      });
+    async submitRegister() {
+      try {
+        const response = await fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            NombreUsuario: this.username,
+            Contrasena: this.password,
+            CorreoElectronico: this.email, // Agregar este campo
+          }),
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        alert('Registro exitoso');
-        console.log('Usuario registrado con ID:', result.userId);
-        this.closeModal();
-      } else {
-        alert(result.error || 'Error al registrarse');
+        const result = await response.json();
+        if (response.ok) {
+          alert("Registro exitoso");
+          console.log("Usuario registrado con ID:", result.userId);
+          this.closeModal();
+        } else {
+          alert(result.error || "Error al registrarse");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor");
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error al conectar con el servidor');
-    }
+    },
+    closeModal() {
+      this.$emit("closeModal");
+    },
   },
-  closeModal() {
-    this.$emit('closeModal');
-  },
-}
-
 };
 </script>
 

@@ -3,7 +3,7 @@ module.exports = {
     devServer: {
       // Dirección y puerto del servidor de desarrollo
       host: 'localhost',
-      port: 8080,
+      port: 8082,
     },
     // Otras configuraciones pueden ir aquí si es necesario
   };
