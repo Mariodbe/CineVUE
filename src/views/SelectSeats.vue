@@ -20,7 +20,7 @@
             v-for="(seat, seatIndex) in row"
             :key="seatIndex"
             class="seat"
-            :class="{ selected: selectedSeats.includes(seat) }"
+            :class="{ selected: selectedSeats.includes(seat), reserved: reservedSeats.includes(seat) }"
             @click="toggleSeat(seat)"
           >
             {{ seat }}
@@ -44,115 +44,138 @@ export default {
     return {
       rows: [
         [
-          "A1",
-          "A2",
-          "A3",
-          "A4",
-          "A5",
-          "A6",
-          "A7",
-          "A8",
-          "A9",
-          "A10",
-          "A11",
-          "A12",
-          "A13",
-          "A14",
+          "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14",
         ],
         [
-          "B1",
-          "B2",
-          "B3",
-          "B4",
-          "B5",
-          "B6",
-          "B7",
-          "B8",
-          "B9",
-          "B10",
-          "B11",
-          "B12",
-          "B13",
-          "B14",
+          "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11", "B12", "B13", "B14",
         ],
         [
-          "C1",
-          "C2",
-          "C3",
-          "C4",
-          "C5",
-          "C6",
-          "C7",
-          "C8",
-          "C9",
-          "C10",
-          "C11",
-          "C12",
-          "C13",
-          "C14",
+          "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12", "C13", "C14",
         ],
         [
-          "D1",
-          "D2",
-          "D3",
-          "D4",
-          "D5",
-          "D6",
-          "D7",
-          "D8",
-          "D9",
-          "D10",
-          "D11",
-          "D12",
-          "D13",
-          "D14",
+          "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12", "D13", "D14",
         ],
         [
-          "E1",
-          "E2",
-          "E3",
-          "E4",
-          "E5",
-          "E6",
-          "E7",
-          "E8",
-          "E9",
-          "E10",
-          "E11",
-          "E12",
-          "E13",
-          "E14",
+          "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11", "E12", "E13", "E14",
         ],
       ],
       selectedSeats: [],
       maxSeats: 5, // Por ejemplo, el máximo de asientos que se pueden seleccionar
+      reservedSeats: [], // Array para almacenar los asientos reservados
     };
   },
+  props: {
+    selectedMovie: {
+      type: Object,
+      required: true,
+    },
+    selectedTime: {
+      type: String,
+      required: true,
+    },
+  },
   methods: {
-    toggleSeat(seat) {
-      if (this.selectedSeats.includes(seat)) {
-        this.selectedSeats = this.selectedSeats.filter((s) => s !== seat); // Deseleccionar
-      } else {
-        if (this.selectedSeats.length < this.maxSeats) {
-          this.selectedSeats.push(seat); // Seleccionar
+    // Método para obtener los asientos reservados
+    async fetchReservedSeats() {
+      try {
+        const response = await fetch('http://localhost:3000/obtenerAsientosReservados', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            peliculaId: this.selectedMovie.id,
+            horaFuncion: this.selectedTime,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.asientosReservados) {
+            this.reservedSeats = data.asientosReservados; // Almacena los asientos reservados
+            console.log('Asientos reservados:', this.reservedSeats); // Ver en consola
+          }
         } else {
-          alert(`No puedes seleccionar más de ${this.maxSeats} asientos.`);
+          console.error('Error al obtener los asientos reservados:', response);
+        }
+      } catch (error) {
+        console.error('Error al obtener los asientos reservados:', error);
+      }
+    },
+
+    toggleSeat(seat) {
+      // Si el asiento está reservado, no permitir seleccionarlo
+      if (this.reservedSeats.includes(seat)) {
+        alert('Este asiento ya está reservado');
+      } else {
+        if (this.selectedSeats.includes(seat)) {
+          this.selectedSeats = this.selectedSeats.filter((s) => s !== seat); // Deseleccionar
+        } else {
+          if (this.selectedSeats.length < this.maxSeats) {
+            this.selectedSeats.push(seat); // Seleccionar
+          } else {
+            alert(`No puedes seleccionar más de ${this.maxSeats} asientos.`);
+          }
         }
       }
     },
+
     closeModal() {
       this.$emit("close");
     },
+
     goBack() {
       this.$emit("back");
     },
-    nextStep() {
+
+    async nextStep() {
       if (this.selectedSeats.length === 0) {
         alert("Por favor, selecciona al menos un asiento.");
       } else {
-        this.$emit("next", [...this.selectedSeats]); // Emitir asientos seleccionados
+        console.log('Datos enviados al servidor:', {
+          peliculaId: this.selectedMovie.id,
+          horaFuncion: this.selectedTime,
+          asientosSeleccionados: this.selectedSeats
+        });
+
+        try {
+          const response = await fetch('http://localhost:3000/reservar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              peliculaId: this.selectedMovie.id,
+              horaFuncion: this.selectedTime,
+              asientosSeleccionados: this.selectedSeats
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Respuesta del servidor:', data);
+            alert(data.message);
+            this.$emit("next", [...this.selectedSeats]); // Emitir los asientos seleccionados para pasar al siguiente paso
+          } else {
+            console.log('Error en la respuesta del servidor:', response);
+            throw new Error('Error al realizar la reserva');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Hubo un error al hacer la reserva');
+        }
       }
     },
+  },
+  watch: {
+    // Verificar si los datos están listos para cargar
+    selectedMovie: 'fetchReservedSeats',
+    selectedTime: 'fetchReservedSeats',
+  },
+
+  mounted() {
+    // Cargar los asientos reservados cuando el componente se monte
+    this.fetchReservedSeats();
   },
 };
 </script>
@@ -249,6 +272,10 @@ export default {
 
 .selected {
   background-color: #2ecc71;
+}
+
+.reserved {
+  background-color: #e74c3c;
 }
 
 .button-container {

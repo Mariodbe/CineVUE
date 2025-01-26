@@ -64,6 +64,7 @@ export default {
       this.closeModal(); // Cerrar el modal
     },
   },
+
 };
 </script>
 

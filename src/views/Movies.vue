@@ -54,8 +54,9 @@
     <SelectSeats
       v-if="showSeatSelection"
       :selectedMovie="selectedMovie"
-      @back="goBackToTimeSelection"
+      :selectedTime="selectedTime"
       @next="handleNext"
+      @back="goBackToTimeSelection"
       @close="closeSeatSelection"
     />
 
@@ -64,6 +65,7 @@
       v-if="showTicketPurchase"
       :selectedMovie="selectedMovie"
       :selectedSeats="selectedSeats"
+      :selectedTime="selectedTime"
       @back="goBackToSelectSeats"
     />
   </div>
@@ -86,62 +88,76 @@ export default {
     return {
       movies,
       selectedMovie: null,
+      selectedTime: null,  // Hora seleccionada
+      selectedSeats: [],  // Asientos seleccionados
       showTimeSelection: false,
       showSeatSelection: false,
       showTicketPurchase: false,
-      selectedSeats: [],
     };
   },
   methods: {
     selectMovie(movie) {
-      this.selectedMovie = movie; // Guarda la película seleccionada
+      this.selectedMovie = movie;  // Guarda la película seleccionada
+      // El modal de selección de hora NO se abre aquí.
     },
     closeModal() {
-      this.selectedMovie = null; // Cierra el modal estableciendo selectedMovie en null
+      this.selectedMovie = null;  // Cierra el modal y reinicia la película seleccionada
+      this.showTimeSelection = false;  // Asegurarse de que el modal de hora se cierre
     },
     openTimeSelection() {
       if (!this.selectedMovie) {
-        alert("Por favor, selecciona una película primero."); // Verifica si hay película seleccionada
+        alert("Por favor, selecciona una película primero.");
         return;
       }
-      this.showTimeSelection = true; // Muestra la selección de hora
-      // Ya no llamamos a closeModal aquí
+      this.showTimeSelection = true;  // Muestra el modal para seleccionar la hora
     },
     closeTimeSelection() {
-      this.showTimeSelection = false; // Oculta la selección de hora
+      this.showTimeSelection = false;  // Cierra el modal de selección de hora
     },
-    openSeatSelection() {
-      if (!this.selectedMovie) {
-        alert("Por favor, selecciona una película primero."); // Verifica si hay película seleccionada
+    openSeatSelection(time) {
+      if (!this.selectedMovie || !time) {
+        alert("Por favor, selecciona una película y una hora primero.");
         return;
       }
-      this.showTimeSelection = false; // Oculta la selección de hora
-      this.showSeatSelection = true; // Muestra la selección de asientos
+      this.selectedTime = time;  // Guarda la hora seleccionada
+      this.showTimeSelection = false;  // Cierra el modal de selección de hora
+      this.showSeatSelection = true;  // Abre el modal para seleccionar asientos
     },
     goBackToTimeSelection() {
-      this.showSeatSelection = false; // Oculta la selección de asientos
-      this.showTimeSelection = true; // Vuelve a la selección de hora
+      this.showSeatSelection = false;  // Cierra el modal de selección de asientos
+      this.showTimeSelection = true;  // Vuelve a abrir el modal de selección de hora
     },
     closeSeatSelection() {
-      this.showSeatSelection = false; // Oculta la selección de asientos
+      this.showSeatSelection = false;  // Cierra el modal de selección de asientos
     },
     goBackToSelectSeats() {
-      this.showTicketPurchase = false; // Oculta la compra de boletos
-      this.showSeatSelection = true; // Regresa a la selección de asientos
+      this.showTicketPurchase = false;  // Cierra el modal de compra
+      this.showSeatSelection = true;  // Vuelve a abrir el modal de selección de asientos
     },
     handleNext(seats) {
-      if (!this.selectedMovie) {
-        alert("Por favor, selecciona una película primero."); // Verifica si hay película seleccionada
+      if (!this.selectedMovie || !this.selectedTime) {
+        alert("Por favor, selecciona una película y una hora primero.");
         return;
       }
-      console.log("Asientos seleccionados:", seats); // Depuración para verificar los asientos
-      this.selectedSeats = seats; // Guarda los asientos seleccionados
-      this.showSeatSelection = false; // Oculta la selección de asientos
-      this.showTicketPurchase = true; // Muestra la compra de boletos
+      this.selectedSeats = seats;  // Guarda los asientos seleccionados
+      this.saveToDatabase();  // Guarda la información en la base de datos
+      this.showSeatSelection = false;  // Cierra el modal de selección de asientos
+      this.showTicketPurchase = true;  // Muestra el modal de compra de boletos
     },
-  },
+    saveToDatabase() {
+      // Este es un ejemplo de cómo podrías guardar los datos en una base de datos
+      const purchaseData = {
+        movie: this.selectedMovie.title,
+        time: this.selectedTime,
+        seats: this.selectedSeats,
+      };
+      console.log("Guardando en la base de datos:", purchaseData);
+    },
+  }
+
 };
 </script>
+
 
 <style scoped>
 .movies {
