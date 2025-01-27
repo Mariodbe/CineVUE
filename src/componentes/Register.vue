@@ -62,7 +62,7 @@ export default {
   methods: {
     async submitRegister() {
       try {
-        const response = await fetch("http://localhost:3000/register", {
+        const response = await fetch("http://localhost:3000/registrarse", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

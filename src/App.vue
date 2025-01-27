@@ -8,6 +8,10 @@
     <!-- Mostrar el modal de Register si el valor de showModal es 'register' -->
     <Register v-if="showModal === 'register'" @showModal="setModal" />
     
+    <!-- Renderizar el componente Reservas directamente -->
+    <Reservas v-if="showModal === ''" /> <!-- Esto renderiza 'Reservas' si no hay modales abiertos -->
+    
+    <!-- Renderizar otras vistas según la ruta -->
     <router-view /> <!-- Se renderizan las vistas según la ruta -->
   </div>
 </template>
@@ -17,13 +21,15 @@
 import Header from './componentes/Header.vue';
 import Login from './componentes/Login.vue';
 import Register from './componentes/Register.vue';
+import Reservas from './views/Reservas.vue';  // Ruta al archivo que contiene el componente
 
 export default {
   name: 'App',
   components: {
     Header,
     Login,
-    Register
+    Register,
+    Reservas  // Aseguramos de incluir Reservas como componente
   },
   data() {
     return {
